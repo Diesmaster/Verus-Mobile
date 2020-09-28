@@ -51,25 +51,27 @@ import AttestationDetails from '../../containers/Identity/Home/AttestationDetail
 import ClaimManager from '../../containers/Identity/PersonalInfo/ClaimManager';
 import MoveIntoCategory from '../../containers/Identity/PersonalInfo/ClaimManager/MoveIntoCategory';
 import AddIdentity from '../../containers/Identity/AddIdentity';
-import KYCstart from '../../containers/BuySellCrypto/PaymentMethod/ManageWyreAccount/KYCstart';
+import KYCStart from '../../containers/BuySellCrypto/PaymentMethod/ManageWyreAccount/KYCstart';
 import KYCInfoScreen from '../../containers/BuySellCrypto/PaymentMethod/ManageWyreAccount/KYCInfoScreen';
 import KYCIdentityInfo from '../../containers/BuySellCrypto/PaymentMethod/ManageWyreAccount/KYCIdentityInfo';
 import KYCIdentityInput from '../../containers/BuySellCrypto/PaymentMethod/ManageWyreAccount/KYCIdentityInput';
 import KYCAddressInput from '../../containers/BuySellCrypto/PaymentMethod/ManageWyreAccount/KYCAddressInput';
 import KYCIdentityFotoInfo from '../../containers/BuySellCrypto/PaymentMethod/ManageWyreAccount/KYCIdentityFotoInfo';
 import KYCfoto from '../../containers/BuySellCrypto/PaymentMethod/ManageWyreAccount/KYCfoto';
+import KYCDocumentType from '../../containers/BuySellCrypto/PaymentMethod/ManageWyreAccount/KYCDocumentType';
 import KYCphotoAddress from '../../containers/BuySellCrypto/PaymentMethod/ManageWyreAccount/KYCphotoAddress';
 import KYCEndInfoScreen from '../../containers/BuySellCrypto/PaymentMethod/ManageWyreAccount/KYCEndInfoScreen';
 import KYCAddressInfo from '../../containers/BuySellCrypto/PaymentMethod/ManageWyreAccount/KYCAddressInfo';
+import KYCLogin from '../../containers/BuySellCrypto/PaymentMethod/ManageWyreAccount/KYCLogin';
+import KYCDocumentUpload from '../../containers/BuySellCrypto/PaymentMethod/ManageWyreAccount/KYCDocumentUpload';
 
 const WALLET = 'wallet';
 
 const MainStack = createStackNavigator()
-const MainDrawer = createDrawerNavigator()
 const SignedOutStack = createStackNavigator()
 const SignedOutNoKeyStack = createStackNavigator()
 const LoadingStack = createStackNavigator()
-const RootStack = createStackNavigator()
+const RootStack = createDrawerNavigator()
 
 const styles = StyleSheet.create({
   header_title_noBack: {
@@ -111,30 +113,11 @@ const styles = StyleSheet.create({
 
 });
 
-function MainScreens() {
-  return (
-    <MainDrawer.Navigator
-      drawerWidth={250}
-      drawerPosition="right"
-      drawerContent={(props) => <SideMenu {...props} />}
-      screenOptions={{
-        swipeEnabled: false
-      }}
-    >
-      <MainDrawer.Screen 
-        name="MainStack"
-        component={MainStackScreens}
-      />
-    </MainDrawer.Navigator>
-  );
-}
-
 function MainStackScreens() {
   return (
     <MainStack.Navigator
       headerMode="screen"
-      screenOptions={({ navigation, params }) => ({
-        headerShown: true,
+      screenOptions={({ navigation }) => ({
         headerStyle: {
           backgroundColor: Colors.primaryColor,
         },
@@ -152,6 +135,7 @@ function MainStackScreens() {
             <Icon name="menu" size={35} color={Colors.secondaryColor} />
           </TouchableOpacity>
         ),
+        gesturesEnabled: false,
         headerTintColor: Colors.secondaryColor,
       })}
     >
@@ -196,10 +180,8 @@ function MainStackScreens() {
           headerLeft: () => (
             <TouchableOpacity
               onPress={() => {
-                if (route.params != null) {
-                  route.params.clearClaims();
-                  navigation.goBack();
-                }
+                route.params.clearClaims();
+                navigation.goBack();
               }}
               style={styles.goBackBtn}
             >
@@ -221,7 +203,7 @@ function MainStackScreens() {
         name="AttestationDetails"
         component={AttestationDetails}
         options={({ route }) => ({
-          title: route.params != null ? route.params.id : null,
+          title: route.params.id,
         })}
       />
 
@@ -229,7 +211,7 @@ function MainStackScreens() {
         name="Identity"
         component={Identity}
         options={({ route }) => ({
-          title: route.params != null ? route.params.selectedScreen : null,
+          title: route.params.selectedScreen,
         })}
       />
 
@@ -245,7 +227,7 @@ function MainStackScreens() {
         name="ClaimDetails"
         component={ClaimDetails}
         options={({ route }) => ({
-          title: route.params != null ? route.params.claimName : null,
+          title: route.params.claimName,
         })}
       />
 
@@ -253,7 +235,7 @@ function MainStackScreens() {
         name="ClaimCategory"
         component={ClaimCategory}
         options={({ route }) => ({
-          title: route.params != null ? route.params.claimCategoryName : null,
+          title: route.params.claimCategoryName,
         })}
       />
 
@@ -280,6 +262,7 @@ function MainStackScreens() {
           title: "Send Result",
           headerLeft: () => null,
           headerRight: () => null,
+          drawerLockMode: "locked-closed",
         }}
       />
 
@@ -289,6 +272,7 @@ function MainStackScreens() {
         options={{
           title: "Seed",
           headerRight: () => null,
+          drawerLockMode: "locked-closed",
         }}
       />
 
@@ -332,17 +316,11 @@ function MainStackScreens() {
         name="GeneralWalletSettings"
         component={GeneralWalletSettings}
         options={{
-          title: "General",
+          title: "General Wallet Settings",
         }}
       />
 
-      <MainStack.Screen
-        name="CoinSettings"
-        component={CoinSettings}
-        options={({ route }) => ({
-          title: route.params != null ? route.params.title : null,
-        })}
-      />
+      <MainStack.Screen name="CoinSettings" component={CoinSettings} />
 
       <MainStack.Screen
         name="DeleteProfile"
@@ -359,6 +337,7 @@ function MainStackScreens() {
           title: "Loading",
           headerRight: () => null,
           headerLeft: () => null,
+          drawerLockMode: "locked-closed",
         }}
       />
 
@@ -377,12 +356,18 @@ function MainStackScreens() {
         component={SelectPaymentMethod}
         options={{
           title: "Select Payment Method",
+          drawerLockMode: "locked-closed",
         }}
       />
 
       <MainStack.Screen
-        name="KYCStartScreen"
-        component={KYCstart}
+        name="KYCStart"
+        component={KYCStart}
+      />
+
+      <MainStack.Screen
+        name="KYCLogin"
+        component={KYCLogin}
       />
 
       <MainStack.Screen
@@ -390,6 +375,14 @@ function MainStackScreens() {
         component={KYCfoto}
       />
 
+      <MainStack.Screen
+        name="KYCDocumentType"
+        component={KYCDocumentType}
+      />
+      <MainStack.Screen
+        name="KYCDocumentUpload"
+        component={KYCDocumentUpload}
+      />
       <MainStack.Screen
         name="KYCphotoAddress"
         component={KYCphotoAddress}
@@ -439,6 +432,7 @@ function MainStackScreens() {
         component={ManageWyreAccount}
         options={{
           title: "Manage Wyre Account",
+          drawerLockMode: "locked-closed",
         }}
       />
 
@@ -448,6 +442,7 @@ function MainStackScreens() {
         options={{
           title: "Manage Wyre Email",
           headerRight: () => null,
+          drawerLockMode: "locked-closed",
         }}
       />
 
@@ -457,6 +452,7 @@ function MainStackScreens() {
         options={{
           title: "Manage Wyre Cellphone",
           headerRight: () => null,
+          drawerLockMode: "locked-closed",
         }}
       />
 
@@ -466,6 +462,7 @@ function MainStackScreens() {
         options={{
           title: "Upload Documents",
           headerRight: () => null,
+          drawerLockMode: "locked-closed",
         }}
       />
 
@@ -475,6 +472,7 @@ function MainStackScreens() {
         options={{
           title: "Manage Payment Method",
           headerRight: () => null,
+          drawerLockMode: "locked-closed",
         }}
       />
 
@@ -484,6 +482,7 @@ function MainStackScreens() {
         options={{
           title: "Upload Personal Details",
           headerRight: () => null,
+          drawerLockMode: "locked-closed",
         }}
       />
 
@@ -493,6 +492,7 @@ function MainStackScreens() {
         options={{
           title: "Upload Proof of Address",
           headerRight: () => null,
+          drawerLockMode: "locked-closed",
         }}
       />
 
@@ -502,6 +502,7 @@ function MainStackScreens() {
         options={{
           title: "Manage Wyre Address",
           headerRight: () => null,
+          drawerLockMode: "locked-closed",
         }}
       />
 
@@ -511,6 +512,7 @@ function MainStackScreens() {
         options={{
           title: "Confirm transaction",
           headerRight: () => null,
+          drawerLockMode: "locked-closed",
         }}
       />
     </MainStack.Navigator>
@@ -605,27 +607,38 @@ function LoadingStackScreens() {
 export default function RootStackScreens(hasAccount, loading, signedIn) {
   return (
     <RootStack.Navigator
+      drawerWidth={250}
+      drawerPosition="right"
+      drawerContent={(props) => <SideMenu {...props} />}
       screenOptions={{
         mode: "modal",
-        headerShown: false,
       }}
     >
       {loading ? (
         <RootStack.Screen
           name="LoadingStack"
           component={LoadingStackScreens}
+          options={{
+            gesturesEnabled: false,
+            drawerLockMode: "locked-closed",
+          }}
         />
       ) : hasAccount ? (
         signedIn ? (
           <RootStack.Screen
             name="SignedIn"
-            component={MainScreens}
+            component={MainStackScreens}
+            options={{
+              gesturesEnabled: false,
+            }}
           />
         ) : (
           <RootStack.Screen
             name="SignedOutStack"
             component={SignedOutStackScreens}
             options={{
+              gesturesEnabled: false,
+              drawerLockMode: "locked-closed",
               headerRight: () => null,
             }}
           />
@@ -634,6 +647,10 @@ export default function RootStackScreens(hasAccount, loading, signedIn) {
         <RootStack.Screen
           name="SignedOutNoKeyStack"
           component={SignedOutNoKeyStackScreens}
+          options={{
+            gesturesEnabled: false,
+            drawerLockMode: "locked-closed",
+          }}
         />
       )}
     </RootStack.Navigator>

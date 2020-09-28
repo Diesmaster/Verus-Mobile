@@ -105,7 +105,6 @@ class SecureLoading extends Component {
       ],
     })
 
-    this.props.navigation.closeDrawer();
     this.props.navigation.dispatch(resetAction)
   }
 

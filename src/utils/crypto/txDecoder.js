@@ -287,12 +287,9 @@ parseTransactionAddresses = (tx, targetAddress, network, skipTargetAddress) => {
 
     // send to self
     if (isSelfSend.inputs && isSelfSend.outputs) {
-      const fee = Number(Number(_total.inputs - _total.outputs).toFixed(8))
-      
       result = {
         type: 'self',
-        fee,
-        amount: fee,
+        amount: Number(_sum.inputs - _sum.outputs).toFixed(8),
         address: targetAddress,
         timestamp: tx.timestamp,
         txid: tx.format.txid,
@@ -310,7 +307,6 @@ parseTransactionAddresses = (tx, targetAddress, network, skipTargetAddress) => {
       result = [{ // reorder since tx sort by default is from newest to oldest
         type: 'sent',
         amount: Number(_sum.inputs.toFixed(8)),
-        fee: Number((Number(_total.inputs) - Number(_total.outputs)).toFixed(8)),
         address: _addresses.outputs[0],
         timestamp: tx.timestamp,
         txid: tx.format.txid,
@@ -351,7 +347,6 @@ parseTransactionAddresses = (tx, targetAddress, network, skipTargetAddress) => {
     result = {
       type: 'sent',
       amount: Number(_sum.inputs.toFixed(8)),
-      fee: Number((Number(_total.inputs) - Number(_total.outputs)).toFixed(8)),
       address: isSelfSend.inputs && isSelfSend.outputs ? targetAddress : _addresses.outputs[0],
       timestamp: tx.timestamp,
       txid: tx.format.txid,

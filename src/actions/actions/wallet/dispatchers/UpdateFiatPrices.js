@@ -4,22 +4,7 @@ import {
   SET_RATES
 } from "../../../../utils/constants/storeType";
 import { GENERAL } from "../../../../utils/constants/intervalConstants";
-import { updateLedgerValue } from "./UpdateLedgerValue";
-
-const channelMap = {
-  [GENERAL]: async (activeUser, coinObj) => {
-    const coinRates = await getCoinRates(coinObj);
-
-    const { result, ...header } = coinRates;
-
-    return {
-      chainTicker: coinObj.id,
-      channel: GENERAL,
-      header,
-      body: result,
-    };
-  },
-};
+import { getCoinObj } from "../../../../utils/CoinData/CoinData";
 
 /**
  * Fetches the appropriate data from the store for the specified channel's fiat privces
@@ -29,13 +14,41 @@ const channelMap = {
  * @param {String[]} channels The enabled channels for the information request
  * @param {String} chainTicker Chain ticker id for chain to fetch balances for
  */
-export const updateFiatPrices = (state, dispatch, channels, chainTicker) =>
-  updateLedgerValue(
-    state,
-    dispatch,
-    channels,
-    chainTicker,
-    SET_RATES,
-    ERROR_RATES,
-    channelMap
+export const updateFiatPrices = async (
+  state,
+  dispatch,
+  channels,
+  chainTicker
+) => {
+  const coinObj = getCoinObj(state.coins.activeCoinsForUser, chainTicker);
+  let channelsPassed = []
+
+  await Promise.all(
+    channels.map(async channel => {
+      if (channel === GENERAL) {
+        try {
+          const coinRates = await getCoinRates(
+            coinObj
+          );
+
+          const { result, ...header } = coinRates;
+
+          dispatch({
+            type: SET_RATES,
+            payload: {
+              chainTicker,
+              channel,
+              header,
+              body: result
+            }
+          });
+          channelsPassed.push(channel)
+        } catch (error) {
+          dispatch({ type: ERROR_RATES, payload: { error } });
+        }
+      }
+    })
   );
+
+  return channelsPassed.length === channels.length
+};

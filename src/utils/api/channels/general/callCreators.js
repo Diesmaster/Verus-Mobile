@@ -2,8 +2,7 @@ import { getCoinPaprikaRate } from './ratesAPIs/coinPaprika';
 import { getAtomicExplorerBTCFees } from './btcFeesAPIs/atomicExplorer';
 import { getFiatExchangeRates } from './ratesAPIs/fiatExchangeRates'
 import ApiException from '../../errors/apiError';
-import { GENERAL } from '../../../constants/intervalConstants';
-import { USD } from '../../../constants/currencies'
+import { GENERAL, USD } from '../../../constants/intervalConstants';
 import { CONNECTION_ERROR } from '../../errors/errorMessages';
 import { GENERAL_CONNECTION_ERROR } from '../../errors/errorCodes';
 

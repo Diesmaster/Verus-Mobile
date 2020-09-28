@@ -6,13 +6,6 @@ export default buttons = {
     alignSelf: 'center',
     backgroundColor: Colors.linkButtonColor,
   },
-  fullWidthButtonKYC: {
-    width: '100%',
-    alignSelf: 'center',
-    height: 40,
-    fontFamily: 'Avenir-Black',
-    backgroundColor: Colors.buttonKYC,
-  },
   defaultButton: {
     alignSelf: 'center',
     backgroundColor: Colors.linkButtonColor,

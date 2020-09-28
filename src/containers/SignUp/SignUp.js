@@ -25,9 +25,7 @@ import SetupSeedModal from '../../components/SetupSeedModal/SetupSeedModal'
 import Styles from '../../styles/index'
 import Colors from '../../globals/colors';
 import { clearAllCoinIntervals } from "../../actions/actionDispatchers"
-import { DLIGHT, ELECTRUM, CHANNELS_NULL_TEMPLATE, CHANNELS } from "../../utils/constants/intervalConstants"
-import { arrayToObject } from "../../utils/objectManip"
-import { DISABLED_CHANNELS, ENABLE_DLIGHT } from '../../../env/main.json'
+import { DLIGHT, ELECTRUM } from "../../utils/constants/intervalConstants"
 
 class SignUp extends Component {
   constructor() {
@@ -35,7 +33,10 @@ class SignUp extends Component {
     this.state = {
       pin: null,
       confirmPin: null,
-      seeds: CHANNELS_NULL_TEMPLATE,
+      seeds: {
+        [DLIGHT]: null,
+        [ELECTRUM]: null,
+      },
       publicSeedModalOpen: false,
       privateSeedModalOpen: false,
       disclaimerRealized: false,
@@ -136,7 +137,7 @@ class SignUp extends Component {
           _errors = true;
         }
 
-        if (_seeds[ELECTRUM] == null || (_seeds[DLIGHT] == null && ENABLE_DLIGHT === true)) {
+        if (_seeds[ELECTRUM] == null || (_seeds[DLIGHT] == null && global.ENABLE_DLIGHT === true)) {
           Alert.alert(
             "Error",
             "Please configure both a primary seed, and a secondary seed."
@@ -169,14 +170,12 @@ class SignUp extends Component {
         if (!_errors && !_warnings) {
           addUser(
             this.state.userName,
-            /*{
+            {
               [ELECTRUM]: _seeds[ELECTRUM],
-              [DLIGHT]: ENABLE_DLIGHT
+              [DLIGHT]: global.ENABLE_DLIGHT
                 ? _seeds[ELECTRUM]
                 : _seeds[DLIGHT],
-              [ETH]: _seeds[ELECTRUM],
-              [ERC20]: _seeds[ELECTRUM]
-            } */arrayToObject(CHANNELS, (acc, channel) => _seeds[channel], true),
+            },
             this.state.pin,
             this.props.accounts
           ).then((action) => {
@@ -188,7 +187,7 @@ class SignUp extends Component {
               if (res) {
                 addUser(
                   this.state.userName,
-                  arrayToObject(CHANNELS, (acc, channel) => _seeds[channel], true),
+                  { [ELECTRUM]: _seeds[ELECTRUM], [DLIGHT]: _seeds[DLIGHT] },
                   this.state.pin,
                   this.props.accounts
                 )
@@ -357,12 +356,12 @@ class SignUp extends Component {
               </View>
               <View style={Styles.wideBlock}>
                 <CheckBox
-                  title={ENABLE_DLIGHT ? "Setup Primary (T Address) Seed" : "Setup Wallet Seed"}
+                  title={global.ENABLE_DLIGHT ? "Setup Primary (T Address) Seed" : "Setup Wallet Seed"}
                   checked={this.state.seeds[ELECTRUM] != null}
                   textStyle={Styles.defaultText}
                   onPress={() => this.setupSeed(ELECTRUM)}
                 />
-                {ENABLE_DLIGHT && (
+                {global.ENABLE_DLIGHT && (
                   <CheckBox
                     title="Setup Secondary (Z Address) Seed"
                     checked={this.state.seeds[DLIGHT] != null}

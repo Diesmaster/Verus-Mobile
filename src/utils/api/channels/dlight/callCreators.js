@@ -7,11 +7,11 @@ export * from './state/synchronizer'
 export * from './state/walletFolder'
 
 // JSON-RPC requests
-export * from './requests/getAddresses'
-export * from './requests/getPrivateBalance'
-export * from './requests/getBlockCount'
-export * from './requests/getInfo'
-export * from './requests/getTransactions'
+export * from './dlightRequests/getAddresses'
+export * from './dlightRequests/getPrivateBalance'
+export * from './dlightRequests/getBlockCount'
+export * from './dlightRequests/getInfo'
+export * from './dlightRequests/getTransactions'
 
 /**
  * Makes a request to the light daemon client
@@ -23,10 +23,14 @@ export * from './requests/getTransactions'
  * @param {String[]} params Paramters to pass in with the request
  */
 export const makeDlightRequest = (coinId, accountHash, coinProto, reqId, method, params) => {
-
+  
   return new Promise((resolve, reject) => {
     VerusLightClient.request(reqId, method, [coinId, coinProto, accountHash, ...params])
     .then(res => {
+      console.log("GOT DLIGHT REQUEST RESULT")
+      console.log(JSON.stringify(res))
+      console.log(typeof res)
+      console.log(res.error)
       if (res.error != null) {
         // DELETE/REFACTOR when proper error displays are made
         console.log(" ------- DLIGHT EXCEPTION ------- ")

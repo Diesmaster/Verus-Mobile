@@ -65,34 +65,13 @@ export default containers = {
     paddingVertical: 16,
     alignSelf: 'center',
   },
-  wideCenterBlockInput: {
-    width: '95%',
-    paddingVertical: 16,
-    alignSelf: 'center',
-    paddingBottom: 18,
-  },
-  wideCenterBlockInput90: {
-    width: '90%',
-    paddingVertical: 16,
-    alignSelf: 'center',
-    paddingBottom: 18,
-  },
   standardWidthCenterBlock: {
     width: '75%',
     paddingVertical: 16,
     alignSelf: 'center',
   },
-  infoKYCContainer: {
-    flexDirection: 'row',
-    alignSelf: 'flex-start',
-    paddingVertical:8,
-    width: '100%'
-  },
   wide: {
     width: '90%',
-  },
-  narrow: {
-    width: '60%'
   },
   wideCenter: {
     width: '90%',
@@ -140,7 +119,7 @@ export default containers = {
   },
   svgHeader:{
     width:'100%',
-    height: 150,
+    height: '20%',
     justifyContent: 'center',
     paddingTop: 12
   },
@@ -168,15 +147,6 @@ export default containers = {
     alignItems: 'center',
     flex: 1,
     maxHeight: '14%',
-    backgroundColor: Colors.secondaryColor,
-    borderTopWidth: 1,
-    borderColor: Colors.tertiaryColor,
-  },
-  shortFooterContainer: {
-    width: '100%',
-    alignItems: 'center',
-    flex: 1,
-    maxHeight: '12%',
     backgroundColor: Colors.secondaryColor,
     borderTopWidth: 1,
     borderColor: Colors.tertiaryColor,
@@ -236,10 +206,6 @@ export default containers = {
   greyStripeContainer: {
     backgroundColor: Colors.tertiaryColor,
     borderBottomWidth: 0,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center'
   },
   halfWidthBox: {
     maxWidth: '50%',
@@ -308,14 +274,6 @@ export default containers = {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-  },
-  containerCalendarButton: {
-      width: '15%',
-      marginTop: '5%',
-      marginLeft: '3%',
-  },
-  height50: {
-    height: 85,
   },
   paddedBorderedBox: {
     borderWidth: 1,

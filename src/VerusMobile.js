@@ -6,7 +6,6 @@ import {
   fetchUsers,
   loadServerVersions,
   loadCachedHeaders,
-  loadEthTxReceipts,
   initSettings,
   requestSeedData,
 } from './actions/actionCreators';
@@ -17,8 +16,7 @@ import {
   checkAndSetVersion
 } from './utils/asyncStore/asyncStore'
 import { connect } from 'react-redux';
-import VerusLightClient from 'react-native-verus-light-client'
-import { ENABLE_VERUS_IDENTITIES } from '../env/main.json'
+import VerusLightClient from 'react-native-verus-light-client';
 
 
 class VerusMobile extends React.Component {
@@ -40,7 +38,7 @@ class VerusMobile extends React.Component {
 
 
     //DELETE/REFACTOR
-    /*VerusLightClient.createWallet('VRSC', 'vrsc', '8ccb033c0e48b27ff91e1ab948367e3bbc6921487c97624ed7ad064025e3dc99', "lightwalletd.testnet.z.cash", 9067, 2, "a seed that is at least 32 bytes long so that it will work with the ZIP 32 protocol.", 0)
+    VerusLightClient.createWallet('VRSC', 'vrsc', '8ccb033c0e48b27ff91e1ab948367e3bbc6921487c97624ed7ad064025e3dc99', "lightwalletd.testnet.z.cash", 9067, 2, "a seed that is at least 32 bytes long so that it will work with the ZIP 32 protocol.", 0)
     .then(res => {
       console.log("ADD WALLET RES")
       console.log(res)
@@ -84,6 +82,7 @@ class VerusMobile extends React.Component {
       console.log(e)
     })*/
 
+
     //TODO: Figure out what should trigger a cache clear on startup of server
     //versions. (The action that triggers it should indicate a server upgraded it's
 
@@ -105,11 +104,7 @@ class VerusMobile extends React.Component {
       actionArr.forEach((action) => {
         this.props.dispatch(action)
       })
-      return Promise.all([
-        loadServerVersions(this.props.dispatch),
-        loadCachedHeaders(this.props.dispatch),
-        loadEthTxReceipts(this.props.dispatch),
-      ]);
+      return Promise.all([loadServerVersions(this.props.dispatch), loadCachedHeaders(this.props.dispatch)])
     })
     .then(() => {
       this.setState({ loading: false })
@@ -117,10 +112,7 @@ class VerusMobile extends React.Component {
     .catch((err) => {
       Alert.alert("Error", err.message)
     })
-
-    if (ENABLE_VERUS_IDENTITIES) {
-      this.props.dispatch(requestSeedData());
-    }
+    this.props.dispatch(requestSeedData());
   }
 
   render() {

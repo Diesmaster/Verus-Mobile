@@ -7,11 +7,10 @@ import {
   API_GET_BALANCES,
   API_GET_FIATPRICE,
   API_GET_INFO,
-  INIT_DLIGHT_ERRORS,
-  INIT_ELECTRUM_ERRORS,
-  INIT_ETH_ERRORS,
-  INIT_ERC20_ERRORS,
-  CHANNELS_OBJECT_TEMPLATE
+  ELECTRUM,
+  DLIGHT,
+  GENERAL,
+  INIT_DLIGHT_ERRORS
 } from "../utils/constants/intervalConstants";
 import {
   ERROR_BALANCES,
@@ -19,26 +18,37 @@ import {
   ERROR_TRANSACTIONS,
   ERROR_RATES,
   ERROR_DLIGHT_INIT,
-  ERROR_ELECTRUM_INIT,
-  ERROR_ERC20_INIT,
-  ERROR_ETH_INIT,
   SET_BALANCES,
   SET_INFO,
   SET_TRANSACTIONS,
   SET_RATES,
-  INIT_DLIGHT_CHANNEL_START
+  CLOSE_DLIGHT_SOCKET,
+  OPEN_DLIGHT_SOCKET
 } from "../utils/constants/storeType";
 
 export const errors = (state = {
   // Ledger calls for coins
-  [API_GET_TRANSACTIONS]: CHANNELS_OBJECT_TEMPLATE,
-  [API_GET_BALANCES]: CHANNELS_OBJECT_TEMPLATE,
-  [API_GET_FIATPRICE]: CHANNELS_OBJECT_TEMPLATE,
-  [API_GET_INFO]: CHANNELS_OBJECT_TEMPLATE,
-  [INIT_DLIGHT_ERRORS]: {},
-  [INIT_ELECTRUM_ERRORS]: {},
-  [INIT_ETH_ERRORS]: {},
-  [INIT_ERC20_ERRORS]: {}
+  [API_GET_TRANSACTIONS]: {
+    [ELECTRUM]: {},
+    [DLIGHT]: {},
+    [GENERAL]: {},
+  },
+  [API_GET_BALANCES]: {
+    [ELECTRUM]: {},
+    [DLIGHT]: {},
+    [GENERAL]: {},
+  },
+  [API_GET_FIATPRICE]: {
+    [ELECTRUM]: {},
+    [DLIGHT]: {},
+    [GENERAL]: {},
+  },
+  [API_GET_INFO]: {
+    [ELECTRUM]: {},
+    [DLIGHT]: {},
+    [GENERAL]: {},
+  },
+  [INIT_DLIGHT_ERRORS]: {}
 }, action) => {
   const { channel, error, chainTicker } = action.payload || {}
 
@@ -48,9 +58,9 @@ export const errors = (state = {
         ...state,
         [API_GET_BALANCES]: {
           ...state[API_GET_BALANCES],
-          [channel]: {
-            ...state[API_GET_BALANCES][channel],
-            [chainTicker]: error
+          [error.channel]: {
+            ...state[API_GET_BALANCES][error.channel],
+            [error.chainTicker]: error
           }
         }
       };
@@ -59,9 +69,9 @@ export const errors = (state = {
         ...state,
         [API_GET_INFO]: {
           ...state[API_GET_INFO],
-          [channel]: {
-            ...state[API_GET_INFO][channel],
-            [chainTicker]: error
+          [error.channel]: {
+            ...state[API_GET_INFO][error.channel],
+            [error.chainTicker]: error
           }
         }
       };
@@ -70,9 +80,9 @@ export const errors = (state = {
         ...state,
         [API_GET_TRANSACTIONS]: {
           ...state[API_GET_TRANSACTIONS],
-          [channel]: {
-            ...state[API_GET_TRANSACTIONS][channel],
-            [chainTicker]: error
+          [error.channel]: {
+            ...state[API_GET_TRANSACTIONS][error.channel],
+            [error.chainTicker]: error
           }
         }
       };
@@ -81,9 +91,9 @@ export const errors = (state = {
         ...state,
         [API_GET_FIATPRICE]: {
           ...state[API_GET_FIATPRICE],
-          [channel]: {
-            ...state[API_GET_FIATPRICE][channel],
-            [chainTicker]: error
+          [error.channel]: {
+            ...state[API_GET_FIATPRICE][error.channel],
+            [error.chainTicker]: error
           }
         }
       };
@@ -95,31 +105,15 @@ export const errors = (state = {
           [chainTicker]: error
         }
       }
-    case ERROR_ELECTRUM_INIT:
+    case OPEN_DLIGHT_SOCKET:
       return {
         ...state,
         [INIT_DLIGHT_ERRORS]: {
           ...state[INIT_DLIGHT_ERRORS],
-          [chainTicker]: error
+          [chainTicker]: null
         }
       }
-    case ERROR_ERC20_INIT:
-      return {
-        ...state,
-        [INIT_DLIGHT_ERRORS]: {
-          ...state[INIT_DLIGHT_ERRORS],
-          [chainTicker]: error
-        }
-      }
-    case ERROR_ETH_INIT:
-      return {
-        ...state,
-        [INIT_DLIGHT_ERRORS]: {
-          ...state[INIT_DLIGHT_ERRORS],
-          [chainTicker]: error
-        }
-      }
-    case INIT_DLIGHT_CHANNEL_START:
+    case CLOSE_DLIGHT_SOCKET:
       return {
         ...state,
         [INIT_DLIGHT_ERRORS]: {

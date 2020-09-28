@@ -9,15 +9,12 @@ import {
   Alert,
   Image,
   Text,
-  ScrollView
 } from 'react-native';
 
 import {
   FormLabel,
   FormValidationMessage
 } from 'react-native-elements';
-
-import Lock from '../../../../images/customIcons/iconmonstr-lock-18.svg';
 
 import Spinner from 'react-native-loading-spinner-overlay';
 
@@ -80,53 +77,50 @@ class KYCphotoAddress extends Component {
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={Styles.root}>
-          <View style={Styles.progressBarContainer}>
-            <Badge
-              status="success"
-              badgeStyle={Styles.progessBadgeDone}
-              containerStyle={Styles.horizontalPaddingBox10}
-            />
-            <Badge
-              status="success"
-              badgeStyle={Styles.progessBadgeDone}
-              containerStyle={Styles.horizontalPaddingBox10}
-            />
-            <Badge
-              status="success"
-              badgeStyle={Styles.progessBadgeDone}
-              containerStyle={Styles.horizontalPaddingBox10}
-            />
-            <Badge
-              status="primary"
-              badgeStyle={Styles.progessBadgeTodo}
-              containerStyle={Styles.horizontalPaddingBox10}
-            />
-        </View>
-        <ScrollView>
-        <View style={styles.mainInputView}>
-          <Spinner
-            visible={this.props.isFetching}
-            textContent="Loading..."
-            textStyle={{ color: '#FFF' }}
+        <View style={Styles.centralRow}>
+          <Badge
+            status="success"
+            badgeStyle={ {scaleX: scalefatorX, scaleY: scaleFactorY } }
+            containerStyle={Styles.horizontalPaddingBox10}
           />
-        <View style={Styles.padding}>
-          <Text  style={{...Styles.boldKYCText}}>Proof of address</Text>
+          <Badge
+            status="success"
+            badgeStyle={ {scaleX: scalefatorX, scaleY: scaleFactorY } }
+            containerStyle={Styles.horizontalPaddingBox10}
+          />
+          <Badge
+            status="success"
+            badgeStyle={ {scaleX: scalefatorX, scaleY: scaleFactorY } }
+            containerStyle={Styles.horizontalPaddingBox10}
+          />
+          <Badge
+            status="primary"
+            badgeStyle={ {scaleX: scalefatorX, scaleY: scaleFactorY } }
+            containerStyle={Styles.horizontalPaddingBox10}
+          />
         </View>
-        <View style={Styles.padding}>
-          <Text style={{ ...Styles.normalKYCText}}>Please make sure th etext is clear and your address matches with your personal information</Text>
-        </View>
-        <View style={Styles.footerContainerKYC}>
+          <View style={styles.mainInputView}>
+            <Spinner
+              visible={this.props.isFetching}
+              textContent="Loading..."
+              textStyle={{ color: '#FFF' }}
+            />
+            <View>
+              <Text style={styles.formLabel}>
+                Uploaded documents: &nbsp; &nbsp;
+                { this.props.field == null ? 0 : this.props.field.value.length}
+              </Text>
+            </View>
             {!this.state.image && (
               <View style={styles.buttonContainerBottom}>
                 <Button
                 titleStyle={Styles.whiteText}
-                buttonStyle={Styles.fullWidthButtonKYC}
+                buttonStyle={Styles.defaultButtonClearWhite}
                   title=" DOCUMENT"
                   onPress={this.handleSelect}
                 />
               </View>
             )}
-        </View>
             {this.state.image && (
               <View>
                 <Image
@@ -136,13 +130,13 @@ class KYCphotoAddress extends Component {
                 <View style={styles.buttonContainer}>
                   <Button
                   titleStyle={Styles.whiteText}
-                  buttonStyle={Styles.fullWidthButtonKYC}
+                  buttonStyle={Styles.defaultButtonClearWhite}
                     title="CONFIRM"
                     onPress={this.handleUpload}
                   />
                   <Button
                   titleStyle={Styles.whiteText}
-                  buttonStyle={Styles.fullWidthButtonKYC}
+                  buttonStyle={Styles.defaultButtonClearWhite}
                     title="CANCEL"
                     onPress={this.clearSelectedImage}
                   />
@@ -150,22 +144,17 @@ class KYCphotoAddress extends Component {
               </View>
             )}
           </View>
-          </ScrollView>
-
-          <View style={Styles.footerContainerKYC} >
-            <Button
-            titleStyle={Styles.whiteText}
-            buttonStyle={Styles.fullWidthButtonKYC}
-              title="CHEAT TO NEXT SCREEN"
-              onPress={()=>{
-                this.props.navigation.navigate("KYCEndInfoScreen")
-              }
-              }
-            />
-          </View>
-
-      </View>
-    </TouchableWithoutFeedback>
+          <Button
+          titleStyle={Styles.whiteText}
+          buttonStyle={Styles.defaultButtonClearWhite}
+            title="CHEAT TO NEXT SCREEN"
+            onPress={()=>{
+              this.props.navigation.navigate("KYCEndInfoScreen")
+            }
+            }
+          />
+        </View>
+      </TouchableWithoutFeedback>
     );
   }
 }

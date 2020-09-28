@@ -14,15 +14,30 @@ import {
 import {
   ELECTRUM,
   DLIGHT,
-  GENERAL,
-  CHANNELS_OBJECT_TEMPLATE
+  GENERAL
 } from "../utils/constants/intervalConstants";
 
 export const responseHeaders = (state = {
-  balances: CHANNELS_OBJECT_TEMPLATE,
-  transactions: CHANNELS_OBJECT_TEMPLATE,
-  rates: CHANNELS_OBJECT_TEMPLATE,
-  info: CHANNELS_OBJECT_TEMPLATE,
+  balances: {
+    [ELECTRUM]: {},
+    [DLIGHT]: {},
+    [GENERAL]: {},
+  },
+  transactions: {
+    [ELECTRUM]: {},
+    [DLIGHT]: {},
+    [GENERAL]: {},
+  },
+  rates: {
+    [ELECTRUM]: {},
+    [DLIGHT]: {},
+    [GENERAL]: {},
+  },
+  info: {
+    [ELECTRUM]: {},
+    [DLIGHT]: {},
+    [GENERAL]: {},
+  },
 }, action) => {
   const { chainTicker, header, channel } = action.payload || {}
 
@@ -62,10 +77,26 @@ export const responseHeaders = (state = {
     case SIGN_OUT:
       return {
         ...state,
-        balances: CHANNELS_OBJECT_TEMPLATE,
-        transactions: CHANNELS_OBJECT_TEMPLATE,
-        rates: CHANNELS_OBJECT_TEMPLATE,
-        info: CHANNELS_OBJECT_TEMPLATE,
+        balances: {
+          [ELECTRUM]: {},
+          [DLIGHT]: {},
+          [GENERAL]: {},
+        },
+        transactions: {
+          [ELECTRUM]: {},
+          [DLIGHT]: {},
+          [GENERAL]: {},
+        },
+        rates: {
+          [ELECTRUM]: {},
+          [DLIGHT]: {},
+          [GENERAL]: {},
+        },
+        info: {
+          [ELECTRUM]: {},
+          [DLIGHT]: {},
+          [GENERAL]: {},
+        },
       };
     default:
       return state;

@@ -1,7 +1,5 @@
 // Handle all calls to Async Storage (persistent) in this file
 
-import { APP_VERSION } from '../../../env/main.json'
-
 import AsyncStorage from '@react-native-community/async-storage';
 // react-native's version of local storage
 
@@ -31,7 +29,7 @@ export const checkAndSetVersion = () => {
           result = -1
         } else {
           storedVersion = res.split('-')
-          currentVersion = APP_VERSION.split('-')
+          currentVersion = global.APP_VERSION.split('-')
   
           //Length determines if a version is a beta or not
           if (currentVersion.length < storedVersion.length) result = -1
@@ -41,7 +39,7 @@ export const checkAndSetVersion = () => {
           }
         }
 
-        if (result != 0) return AsyncStorage.setItem('verus_mobile_version', APP_VERSION)
+        if (result != 0) return AsyncStorage.setItem('verus_mobile_version', global.APP_VERSION)
         return
       })
       .then(() => {

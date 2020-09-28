@@ -6,7 +6,6 @@ import {
   Text,
   Alert,
   Image,
-  ScrollView,
 } from 'react-native';
 import {
   selectWyreAccount,
@@ -23,9 +22,6 @@ import Styles from '../../../../styles/index';
 import Colors from '../../../../globals/colors';
 
 import VerifyIdentity from '../../../../images/customIcons/VerifyAddress.svg';
-
-import Nr1 from '../../../../images/customIcons/nr1.svg';
-import Nr2 from '../../../../images/customIcons/nr2.svg';
 
 import { NavigationActions } from '@react-navigation/compat';
 
@@ -47,83 +43,72 @@ class KYCIdentityFotoInfo extends Component {
 
 
 
-  onClick = () => {  this.props.navigation.navigate("KYCfoto") }
+  onClick = () => {  this.props.navigation.navigate("KYCDocumentType") }
+
 
     render() {
+
+      const scaleFactorY = 2;
+      const scalefatorX = 2;
+
       return (
         <View style={Styles.root}>
-          <View style={Styles.progressBarContainer}>
+          <View style={Styles.centralRow}>
             <Badge
               status="success"
-              badgeStyle={Styles.progessBadgeDone}
+              badgeStyle={ {scaleX: scalefatorX, scaleY: scaleFactorY } }
               containerStyle={Styles.horizontalPaddingBox10}
             />
             <Badge
               status="success"
-              badgeStyle={Styles.progessBadgeDone}
+              badgeStyle={ {scaleX: scalefatorX, scaleY: scaleFactorY } }
               containerStyle={Styles.horizontalPaddingBox10}
             />
             <Badge
               status="primary"
-              badgeStyle={Styles.progessBadgeTodo}
+              badgeStyle={ {scaleX: scalefatorX, scaleY: scaleFactorY } }
               containerStyle={Styles.horizontalPaddingBox10}
             />
             <Badge
               status="primary"
-              badgeStyle={Styles.progessBadgeTodo}
+              badgeStyle={ {scaleX: scalefatorX, scaleY: scaleFactorY } }
               containerStyle={Styles.horizontalPaddingBox10}
             />
           </View>
-          <ScrollView>
           <View style={Styles.svgHeader}>
             <VerifyIdentity height={'100%'} width={'100%'}/>
           </View>
-          <View>
-            <View style={Styles.padding}>
-              <Text style={Styles.boldKYCText}>Verify your photo ID</Text>
+          <View style={Styles.padding}>
+            <View>
+              <Text style={Styles.boldText}>Verify your photo ID</Text>
             </View>
-            <View style={Styles.padding}>
-              <Text style={{ ...Styles.normalKYCText}}>In order to comply with federal regulations, PrimeTrust requires to verify your photo ID </Text>
+            <View>
+              <Text style={{ ...Styles.centralLightTextPadded, textAlign: 'left' }}>In order to comply with federal regulations, PrimeTrust requires to verify your photo ID </Text>
             </View>
           </View>
           <View style={Styles.padding}>
-            <View style={Styles.alignItemsRight}>
-              <View style={Styles.infoKYCContainer}>
-                <Badge
-                  status="primary"
-                  badgeStyle={Styles.smallBlackDot}
-                  containerStyle={Styles.smallBlackDotContainer}
-                />
-                <View style={Styles.wide}>
-                  <Text style={{...Styles.normalKYCText}}>Chose from: passport, driverslisence, or identity card</Text>
-                </View>
-              </View>
-              <View style={Styles.infoKYCContainer}>
-                <Badge
-                   status="primary"
-                   badgeStyle={Styles.smallBlackDot}
-                   containerStyle={Styles.smallBlackDotContainer}
-                />
-                <View style={Styles.wide}>
-                  <Text style={{...Styles.normalKYCText}}>Identity number form the chosen document</Text>
-                </View>
-              </View>
+          <View style={Styles.alignItemsRight}>
+          <View style={{...Styles.startRow, ...Styles.containerVerticalPadding, width: '100%'}}>
+            <Badge status="primary" containerStyle={Styles.horizontalPaddingBox5} />
+              <Text style={{...Styles.leftLightText, width: '90%'}}>Chose from: passport, driverslisence, or identity card</Text>
+           </View>
+           <View style={{...Styles.startRow, ...Styles.containerVerticalPadding, width: '100%'}}>
+             <Badge status="primary" containerStyle={Styles.horizontalPaddingBox5} />
+               <Text style={{...Styles.leftLightText, width: '90%'}}>Identity number form the chosen document</Text>
             </View>
           </View>
-          </ScrollView>
-
-          <View style={Styles.footerContainerKYC}>
-           <Button
-            title="CONTINUE"
-            titleStyle={Styles.whiteText}
-            buttonStyle={Styles.fullWidthButtonKYC}
-            onPress={ this.onClick }
-           />
-         </View>
-  
-       </View>
+          </View>
+          <View style={Styles.padding}>
+          <Button
+          title="CONTINUE"
+          titleStyle={Styles.whiteText}
+          buttonStyle={Styles.fullWidthButton}
+          onPress={ this.onClick }
+          />
+        </View>
+        </ View>
       );
-  }
+    }
 }
 
 const mapStateToProps = (state) => ({

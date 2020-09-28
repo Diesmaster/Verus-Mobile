@@ -57,7 +57,7 @@ export const MAX_VERIFICATION_DESC = 'Complete Verification (Highly recommended)
     'cross verified across at least two different electrum servers, and the transaction IDs of your existing ' +
     'transactions will be double-checked through local transaction hashing.';
 export const VERIFICATION_LOCKED = 'The verification level settings for this coin have been locked and cannot be changed.';
-export const DEFAULT_PRIVATE_ADDRS = 1
+export const DEFAULT_PRIVATE_ADDRS = 100
 
 // Chain QR
 export const INCOMPLETE_CHAIN_QR = 'VerusQR code impartial or incomplete, cannot parse QR data.';
@@ -69,23 +69,17 @@ export const PUBLIC = 'public'
 export const TOTAL = 'total'
 
 // Payment Methods
-export const ENABLE_FIAT_GATEWAY = true;
+export const ENABLE_WYRE = true;
 
 export const WYRE_URL = 'https://api.testwyre.com';
 export const WYRE_REFERRER_ACCOUNT_ID = 'verus-valu';
 
-// ETH Network IDs
-export const ETH_NETWORK_IDS = {
-    ['homestead']: 1,
-    ['ropsten']: 3,
-    ['rinkeby']: 4,
-    ['goerli']: 5,
-    ['kovan']: 42
-}
-
 export const SUPPORTED_COUNTRIES = ['US'];
 export const WYRE_COUNTRIES = [{ value: 'US' }, ];
+
+export const PRIMETRUST_COUNTRIES = [{ value: 'US' },{ value: 'GB' }, ];
 export const STATES = [
+    { value: 'N/A' },
     { value: 'AL' },
     { value: 'AK' },
     { value: 'AS' },
@@ -142,8 +136,3 @@ export const STATES = [
     { value: 'WI' },
     { value: 'WY' }
 ];
-
-export const SUBWALLET_NAMES = {
-    MAIN_WALLET: "Main",
-    PRIVATE_WALLET: "Private"
-}

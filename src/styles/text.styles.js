@@ -37,7 +37,7 @@ export default text = {
     fontSize: 24,
     textAlign: 'center',
     color: Colors.quinaryColor,
-    fontFamily: 'Avenir-Black'
+    fontFamily: 'Avenir-Black',
   },
   errorText: {
     color: Colors.warningButtonColor,
@@ -85,30 +85,6 @@ export default text = {
     fontSize: 16,
     textAlign: 'left',
   },
-  boldKYCText: {
-    fontSize: 16,
-    fontFamily: 'Avenir-Black',
-    fontWeight: 'bold',
-    color: Colors.kycBlack,
-  },
-  normalKYCText:{
-    fontSize: 16,
-    fontFamily: 'Avenir-Medium',
-    fontWeight: 'normal',
-    color: Colors.kycBlack,
-  },
-  smallKYCText:{
-    fontSize: 14,
-    fontFamily: 'Avenir-Medium',
-    fontWeight: 'normal',
-    color: Colors.kycLight,
-  },
-  headerKYCText: {
-    fontSize: 20,
-    fontFamily: 'Avenir-Black',
-    fontWeight: 'bold',
-    color: Colors.kycBlack,
-  },
   centralInfoTextPadded: {
     fontFamily: 'Avenir-Black',
     color: Colors.quaternaryColor,
@@ -116,7 +92,7 @@ export default text = {
     paddingVertical: 6,
   },
   whiteText: {
-    fontFamily: 'Avenir-Medium',
+    fontFamily: 'Avenir-Book',
     color: Colors.secondaryColor,
   },
   linkText: {
@@ -211,11 +187,12 @@ export default text = {
   listItemRightTitleDefault: {
     color: Colors.quinaryColor,
   },
-  listItemSubtitleError: {
-    color: 'rgba(206,68,70,1)',
+  listItemRightTitleDefaultError: {
+    color: Colors.quinaryColor,
+    paddingVertical: 2,
   },
   listItemSubtitleDefault: {
-    color: 'gray',
+    color: 'rgba(206,68,70,1)',
   },
   fiatLabel: {
     backgroundColor: Colors.tertiaryColor,

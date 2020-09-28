@@ -20,27 +20,24 @@ import { saveGeneralSettings } from '../../../../actions/actionCreators';
 import { connect } from 'react-redux';
 import Styles from '../../../../styles/index'
 import Colors from '../../../../globals/colors'
-import { CURRENCY_NAMES, SUPPORTED_CURRENCIES, USD } from '../../../../utils/constants/currencies'
-import { Dropdown } from "react-native-material-dropdown";
 
 class WalletSettings extends Component {
   constructor(props) {
     super(props);
-    const { generalWalletSettings } = props
 
-    this.state = {
-      ...generalWalletSettings,
-      maxTxCount:
-        generalWalletSettings.maxTxCount != null
-          ? generalWalletSettings.maxTxCount
-          : "10",
-      displayCurrency:
-        generalWalletSettings.displayCurrency != null
-          ? generalWalletSettings.displayCurrency
-          : USD,
-      errors: { maxTxCount: false, displayCurrency: false },
-      loading: false,
-    };
+    if (this.props.generalWalletSettings.hasOwnProperty("maxTxCount")) {
+      this.state = {
+        ...this.props.generalWalletSettings,
+        errors: { maxTxCount: false },
+        loading: false
+      }
+    } else {
+      this.state = {
+        maxTxCount: "10",
+        errors: { maxTxCount: false },
+        loading: false
+      };
+    }
   }
 
   _handleSubmit = () => {
@@ -52,9 +49,7 @@ class WalletSettings extends Component {
     this.setState({ loading: true }, () => {
       const stateToSave = {
         maxTxCount: Number(this.state.maxTxCount),
-        displayCurrency: this.state.displayCurrency
       }
-
       saveGeneralSettings(stateToSave)
       .then(res => {
         this.props.dispatch(res)
@@ -82,23 +77,14 @@ class WalletSettings extends Component {
 
   validateFormData = () => {
     this.setState({
-      errors: { maxTxCount: null, displayCurrency: null }
+      errors: {maxTxCount: null}
     }, () => {
       let _errors = false
       const _maxTxCount = this.state.maxTxCount
 
-      if (
-        !_maxTxCount ||
-        _maxTxCount.length === 0 ||
-        isNaN(_maxTxCount) ||
-        Number(_maxTxCount) < 10 ||
-        Number(_maxTxCount) > 100
-      ) {
-        this.handleError(
-          "Please enter a valid number from 10 to 100",
-          "maxTxCount"
-        );
-        _errors = true;
+      if (!_maxTxCount || _maxTxCount.length === 0 || isNaN(_maxTxCount) || Number(_maxTxCount) < 10 || Number(_maxTxCount) > 100) {
+        this.handleError("Please enter a valid number from 10 to 100", "maxTxCount")
+        _errors = true
       }
 
       if (!_errors) {
@@ -114,7 +100,7 @@ class WalletSettings extends Component {
           contentContainerStyle={{...Styles.innerHeaderFooterContainerCentered, ...Styles.fullHeight}}>
             <Input 
               label="Maximum Displayed Transaction Count:"
-              labelStyle={Styles.mediumFormInputLabel}
+              labelStyle={Styles.formCenterLabel}
               containerStyle={Styles.wideCenterBlock}
               inputStyle={Styles.inputTextDefaultStyle}
               onChangeText={(text) => this.setState({maxTxCount: text})}
@@ -127,25 +113,6 @@ class WalletSettings extends Component {
                   :
                   null
               }
-            />
-            <Dropdown
-              containerStyle={{...Styles.wideCenterBlock, paddingHorizontal: 9 }}
-              labelExtractor={(item) => `${item} - ${CURRENCY_NAMES[item]}`}
-              valueExtractor={(item) => item}
-              data={SUPPORTED_CURRENCIES}
-              onChangeText={(value, index, data) => {
-                console.log(value)
-                this.setState({ displayCurrency: value });
-              }}
-              value={this.state.displayCurrency}
-              textColor={Colors.quinaryColor}
-              selectedItemColor={Colors.quinaryColor}
-              baseColor={Colors.quinaryColor}
-              label="Fiat display currency:"
-              labelTextStyle={Styles.mediumFormInputLabel}
-              labelFontSize={16}
-              pickerStyle={{ backgroundColor: Colors.tertiaryColor }}
-              itemTextStyle={Styles.defaultText}
             />
         </ScrollView>
         <View style={Styles.highFooterContainer}>

@@ -21,9 +21,11 @@ import { connect } from 'react-redux';
 import { 
   validateLogin, 
   setUserCoins, 
+  //everythingNeedsUpdate, 
   fetchActiveCoins,
   signIntoAuthenticatedAccount,
-  COIN_MANAGER_MAP,
+  addCoin,
+  //setUpdateIntervalID
  } from '../../actions/actionCreators';
 import { Dropdown } from 'react-native-material-dropdown';
 import { Verus } from '../../images/customIcons/index';
@@ -34,8 +36,7 @@ import { activateChainLifecycle } from "../../actions/actions/intervals/dispatch
 import StandardButton from "../../components/StandardButton";
 import PasswordInput from '../../components/PasswordInput'
 import { DLIGHT } from "../../utils/constants/intervalConstants";
-import { initDlightWallet } from "../../actions/actions/channels/dlight/dispatchers/LightWalletReduxManager";
-import { DISABLED_CHANNELS, ENABLE_DLIGHT } from '../../../env/main.json'
+import { initDlightWallet } from "../../actions/actions/dlight/dispatchers/LightWalletReduxManager";
 
 import { removeIdentityData } from '../../utils/asyncStore/identityStorage';
 import { TouchableHighlight } from "react-native-gesture-handler";
@@ -88,20 +89,11 @@ class Login extends Component {
         this.props.dispatch(setUserCoinsAction)
 
         for (let i = 0; i < activeCoinsForUser.length; i++) {
-          const coinObj = activeCoinsForUser[i]
-
-          await Promise.all(coinObj.compatible_channels.map(channel => {
-            if (!DISABLED_CHANNELS.includes(channel) && COIN_MANAGER_MAP.initializers[channel]) {
-              return COIN_MANAGER_MAP.initializers[channel](coinObj)
-            } else return null
-          }))
-
-          // TODO: Allow selective channel disabling in settings
-          // if (ENABLE_DLIGHT && this.props.coinSettings[activeCoinsForUser[i].id].channels.includes(DLIGHT)) {
-          //   await initDlightWallet(activeCoinsForUser[i])
-          // }
+          if (global.ENABLE_DLIGHT && this.props.coinSettings[activeCoinsForUser[i].id].channels.includes(DLIGHT)) {
+            await initDlightWallet(activeCoinsForUser[i])
+          }
   
-          activateChainLifecycle(coinObj.id);
+          activateChainLifecycle(activeCoinsForUser[i].id);
         }
 
         this.props.dispatch(signIntoAuthenticatedAccount())
@@ -163,7 +155,7 @@ class Login extends Component {
   render() {
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <View style={Styles.focalCenter}>          
+        <View style={Styles.focalCenter}>
           <Image
             source={Verus}
             style={{

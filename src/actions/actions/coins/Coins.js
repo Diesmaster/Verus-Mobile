@@ -6,46 +6,19 @@ import {
   storeCoins,
   getActiveCoinList
 } from '../../../utils/asyncStore/asyncStore';
-import { DLIGHT, ETH, ERC20, ELECTRUM, GENERAL } from '../../../utils/constants/intervalConstants';
-import { initDlightWallet, closeDlightWallet } from '../channels/dlight/dispatchers/LightWalletReduxManager';
-import { initEthWallet, closeEthWallet } from '../channels/eth/dispatchers/EthWalletReduxManager';
-import { initErc20Wallet, closeErc20Wallet } from '../channels/erc20/dispatchers/Erc20WalletReduxManager';
-import { initElectrumWallet, closeElectrumWallet } from '../channels/electrum/dispatchers/ElectrumWalletReduxManager';
-import { initGeneralWallet, closeGeneralWallet } from '../channels/general/dispatchers/GeneralWalletReduxManager';
-import { DISABLED_CHANNELS } from '../../../../env/main.json'
-
-export const COIN_MANAGER_MAP = {
-  initializers: {
-    [ETH]: initEthWallet,
-    [ERC20]: initErc20Wallet,
-    [ELECTRUM]: initElectrumWallet,
-    [DLIGHT]: initDlightWallet,
-    [GENERAL]: initGeneralWallet
-  },
-  closers: {
-    [ETH]: closeEthWallet,
-    [ERC20]: closeErc20Wallet,
-    [ELECTRUM]: closeElectrumWallet,
-    [DLIGHT]: closeDlightWallet,
-    [GENERAL]: closeGeneralWallet
-  }
-}
+import { DLIGHT } from '../../../utils/constants/intervalConstants';
+import { initDlightWallet, closeDlightWallet } from '../dlight/dispatchers/LightWalletReduxManager';
 
 // Add coin by saving it to localstorage, and optionally intialize dlight backend
 export const addCoin = (fullCoinObj, activeCoins, userName, channels) => {
   let coinIndex = activeCoins.findIndex(x => x.id === fullCoinObj.id);
-  let initializers = []
-
-  Object.keys(COIN_MANAGER_MAP.initializers).map(channel => {
-    if (!DISABLED_CHANNELS.includes(channel) && channels.includes(channel)) {
-      initializers.push(COIN_MANAGER_MAP.initializers[channel](fullCoinObj))
-    }
-  })
+  let dlightInit = global.ENABLE_DLIGHT && channels.includes(DLIGHT) ? [initDlightWallet(fullCoinObj)] : []
   
   if (coinIndex > -1) {
     if (activeCoins[coinIndex].users.includes(userName)) {
+      // Do nothing except for conditionally enable dlight backend
       return new Promise((resolve, reject) => {
-        Promise.all(initializers)
+        Promise.all(dlightInit)
         .then(() => {
           resolve(setCoinList(activeCoins))
         })
@@ -57,7 +30,7 @@ export const addCoin = (fullCoinObj, activeCoins, userName, channels) => {
       return new Promise((resolve, reject) => {
         storeCoins(activeCoins)
         .then(() => {
-          return Promise.all(initializers)
+          return Promise.all(dlightInit)
         })
         .then(() => {
           resolve(setCoinList(activeCoins))
@@ -71,7 +44,7 @@ export const addCoin = (fullCoinObj, activeCoins, userName, channels) => {
     return new Promise((resolve, reject) => {
       storeCoins(activeCoins)
       .then(() => {
-        return Promise.all(initializers)
+        return Promise.all(dlightInit)
       })
       .then(() => {
         resolve(setCoinList(activeCoins))
@@ -82,33 +55,19 @@ export const addCoin = (fullCoinObj, activeCoins, userName, channels) => {
 }
 
 // Remove a user's name from an active coin
-export const removeExistingCoin = (coinID, activeCoins, userName, deleteWallet = false) => {
+export const removeExistingCoin = (coinID, activeCoins, userName, closeSocket, deleteWallet = false) => {
   let coinIndex = activeCoins.findIndex(x => x.id === coinID);
   
   if (coinIndex > -1 && activeCoins[coinIndex].users.includes(userName)) {
     let userIndex = activeCoins[coinIndex].users.findIndex(n => n === userName);
-    let closers = []
-
-    Object.keys(COIN_MANAGER_MAP.closers).map(channel => {
-      if (
-        activeCoins[coinIndex].compatible_channels.includes(channel) &&
-        !DISABLED_CHANNELS.includes(channel)
-      ) {
-        closers.push(
-          COIN_MANAGER_MAP.closers[channel](
-            activeCoins[coinIndex],
-            deleteWallet
-          )
-        );
-      }
-    })
+    let dlightClose = closeSocket ? [closeDlightWallet(activeCoins[coinIndex], deleteWallet)] : []
 
     activeCoins[coinIndex].users.splice(userIndex, 1)
 
     return new Promise((resolve, reject) => {
       storeCoins(activeCoins)
       .then(() => {
-        return Promise.all(closers)
+        return Promise.all(dlightClose)
       })
       .then(() => {
         resolve(setCoinList(activeCoins))
