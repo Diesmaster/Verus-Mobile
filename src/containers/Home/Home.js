@@ -52,7 +52,7 @@ class Home extends Component {
   }
 
 /*componentDidMount(){
-  this.createWallet('VRSC', 'vrsc', '8ccb033c0e48b27ff91e1ab948367e3bbc6921487c97624ed7ad064025e3dc99');
+  this.createWallet('VRSC', 'vrsc', '8ccb033c0e48b27ff91e1ab948367e3bbc6921487c97624ed7ad064025e3dc99'); asxdfasd/fhj laksdfloahsdfkljashd lf
 }*/
 
 
