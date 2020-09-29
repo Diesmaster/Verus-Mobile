@@ -1,4 +1,4 @@
-/*
+  /*
   This component is responsible for creating verusQR invoices and
   showing the user their receiving address. If the user ever wants
   to receive coins from anyone, they should be able to go to this
@@ -30,7 +30,6 @@ import { conditionallyUpdateWallet } from "../../../actions/actionDispatchers"
 import { API_GET_FIATPRICE, API_GET_BALANCES, GENERAL, USD, ELECTRUM, DLIGHT } from "../../../utils/constants/intervalConstants"
 import { expireData } from "../../../actions/actionCreators"
 import Store from "../../../store"
-import SwitchButton from "switch-button-react-native"
 
 class ReceiveCoin extends Component {
   constructor(props) {
@@ -71,8 +70,6 @@ class ReceiveCoin extends Component {
       errors,
       amountFiat
     } = state;
-
-    console.log(JSON.stringify(address))
   }
 
   setAddress = () => {
@@ -344,7 +341,7 @@ walletPrivate = () => {
       selectedIndex={selectedIndex}
       selectedItemColor={Colors.primaryColor}
       buttons={buttons}
-      containerStyle={{height: 35}}
+      containerStyle={{height: 40}}
       containerStyle = {{
         borderStyle: 'dotted',
         borderWidth: 0
@@ -471,7 +468,6 @@ if(this.state.privateIndex == 0){
     }
 
 
-    console.log(activeUser.keys[coinObj.id].dlight.addresses)
     return(
     <View >
     <View style={Styles.centralRow}>

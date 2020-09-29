@@ -9,7 +9,7 @@
 */
 
 import React, { Component } from "react";
-import { ListItem, Divider } from "react-native-elements";
+import { ListItem } from "react-native-elements";
 import {
   View,
   Text,
@@ -19,23 +19,20 @@ import {
   RefreshControl
 } from "react-native";
 import {
+  updateCoinBalances,
+  setCoinRates,
   setActiveCoin,
   setActiveApp,
   setActiveSection,
-  setActiveSectionBuySellCrypto,
-  expireData,
+  everythingNeedsUpdate,
+  setActiveSectionBuySellCrypto
 } from '../../actions/actionCreators';
 import { connect } from 'react-redux';
-import { truncateDecimal } from '../../utils/math';
+import { satsToCoins, truncateDecimal } from '../../utils/math';
 import { NavigationActions } from 'react-navigation';
-import Styles from '../../styles/index'
+import styles from './Home.styles'
 import Colors from "../../globals/colors";
-import Store from '../../store/index'
-import { ENABLE_WYRE } from "../../utils/constants/constants";
-import { withNavigationFocus } from 'react-navigation';
-import { API_GET_FIATPRICE, API_GET_ADDRESSES, API_GET_BALANCES, API_GET_INFO, ELECTRUM, DLIGHT, GENERAL, USD } from "../../utils/constants/intervalConstants";
-import { conditionallyUpdateWallet } from "../../actions/actionDispatchers";
-import VerusLightClient from "react-native-verus-light-client";
+import { ENABLE_WYRE } from "../../utils/constants";
 
 const CONNECTION_ERROR = "Connection Error"
 
@@ -43,40 +40,50 @@ class Home extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      samsarray: [],
-      totalFiatBalance: this.getTotalFiatBalance(props),
+      totalFiatBalance: 0,
+      coinRates: {},
       loading: false
     };
-
+    this.calculateTotalBalance = this.calculateTotalBalance.bind(this);
     this.updateProps = this.updateProps.bind(this);
   }
 
-componentDidMount(){
-  this.createWallet('VRSC', 'vrsc', '8ccb033c0e48b27ff91e1ab948367e3bbc6921487c97624ed7ad064025e3dc99');
-}
-
-
-  componentDidUpdate(lastProps) {
-    if (lastProps.isFocused !== this.props.isFocused && this.props.isFocused) {
-      this.refresh();
-    }
+  componentDidMount() {
+    this.refresh();
   }
 
-  refresh = () => {
-    this.setState({ loading: true }, () => {
-      Promise.all(this.props.activeCoinsForUser.map(async (coinObj) => {
-        await conditionallyUpdateWallet(Store.getState(), this.props.dispatch, coinObj.id, API_GET_FIATPRICE)
-        await conditionallyUpdateWallet(Store.getState(), this.props.dispatch, coinObj.id, API_GET_BALANCES)
-        await conditionallyUpdateWallet(Store.getState(), this.props.dispatch, coinObj.id, API_GET_INFO)
-      })).then(res => {
-        this.setState({ loading: false })
-      })
-      .catch(error => {
-        this.setState({ loading: false })
-        console.warn(error)
-      })
-    })
+  //TODO: Fix the fact that at this point, activeUser doesnt have their keys yet
+  //componentWillReceiveProps() {
+  //  //TODO: Evaluate whether this is a performance issue
+  //  this.refresh();
+  //}
 
+  refresh = () => {
+    const _activeCoinsForUser = this.props.activeCoinsForUser
+    const _balances = this.props.balances
+    const _activeAccount = this.props.activeAccount
+    let promiseArray = []
+
+    if (this.props.activeCoinsForUser.length > 0) {
+      if(this.props.needsUpdate.rates) {
+        console.log("Rates need update, pushing update to transaction array")
+        if (!this.state.loading) {
+          this.setState({ loading: true });
+        }
+        promiseArray.push(setCoinRates(_activeCoinsForUser))
+      }
+
+      if(this.props.needsUpdate.balances) {
+        console.log("Balances need update, pushing update to transaction array")
+        if (!this.state.loading) {
+          this.setState({ loading: true });
+        }
+        promiseArray.push(updateCoinBalances(_balances, _activeCoinsForUser, _activeAccount))
+      }
+
+      this.calculateTotalBalance()
+      this.updateProps(promiseArray)
+    }
   }
 
   resetToScreen = (route, title, data) => {
@@ -92,12 +99,7 @@ componentDidMount(){
   }
 
   forceUpdate = () => {
-    this.props.activeCoinsForUser.map(coinObj => {
-      this.props.dispatch(expireData(coinObj.id, API_GET_FIATPRICE))
-      this.props.dispatch(expireData(coinObj.id, API_GET_BALANCES))
-      this.props.dispatch(expireData(coinObj.id, API_GET_INFO))
-    })
-
+    this.props.dispatch(everythingNeedsUpdate())
     this.refresh();
   }
 
@@ -122,7 +124,7 @@ componentDidMount(){
         })
         .then((res) => {
           if (res) {
-            this.setState({ totalFiatBalance: this.getTotalFiatBalance(this.props) })
+            this.calculateTotalBalance()
             resolve(true)
           }
           else {
@@ -132,25 +134,21 @@ componentDidMount(){
     })
   }
 
-  getTotalFiatBalance = (props) => {
+  calculateTotalBalance = () => {
     let _totalFiatBalance = 0
     let coinBalance = 0
-    const balances = props.balances.public
-    const { rates, displayCurrency } = props
-    const balanceErrors = props.balances.errors.public
+    const balances = this.props.balances
 
-    for (let key in rates) {
-      if (rates[key][displayCurrency]) {
-        const price = rates[key][displayCurrency]
+    for (let key in this.props.rates) {
+      if (typeof this.props.rates[key] === "number") {
+        coinBalance = balances.hasOwnProperty(key) && !balances[key].error && !isNaN(balances[key].result.confirmed) ?
+        satsToCoins(balances[key].result.confirmed) : 0
 
-        coinBalance = balances.hasOwnProperty(key) && !balanceErrors[key] && !isNaN(balances[key].confirmed) ?
-        truncateDecimal(balances[key].confirmed, 4) : 0
-
-        _totalFiatBalance += coinBalance*price
+        _totalFiatBalance += coinBalance*this.props.rates[key]
       }
     }
 
-    return _totalFiatBalance.toFixed(2)
+    this.setState({ totalFiatBalance: _totalFiatBalance });
   }
 
   _verusPay = () => {
@@ -181,163 +179,101 @@ componentDidMount(){
   }
 
   renderCoinList = () => {
-    const { rates, balances, activeCoinsForUser, displayCurrency } = this.props;
-
     return (
       <ScrollView
-        style={Styles.wide}
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.loading}
-            onRefresh={this.forceUpdate}
-          />
-        }
-      >
+      style={styles.coinList}
+      refreshControl={
+        <RefreshControl
+          refreshing={this.state.loading}
+          onRefresh={this.forceUpdate}
+        />
+      }>
         <TouchableOpacity onPress={this._verusPay}>
           <ListItem
-            title={<Text style={Styles.listItemLeftTitleDefault}>VerusPay</Text>}
+            roundAvatar
+            title={<Text style={styles.coinItemLabel}>VerusPay</Text>}
             hideChevron
-            leftAvatar={{
-              source: require("../../images/customIcons/verusPay.png")
-            }}
-            containerStyle={Styles.bottomlessListItemContainer}
+            avatar={require('../../images/customIcons/verusPay.png')}
+            containerStyle={{ borderBottomWidth: 0 }}
           />
         </TouchableOpacity>
         <FlatList
-          data={activeCoinsForUser}
-          scrollEnabled={false}
-          renderItem={({ item, index }) => (
-            <TouchableOpacity
-              onPress={() => {
-                this._openCoin(activeCoinsForUser[index], item);
-              }}
-            >
-              <ListItem
-                roundAvatar
-                title={<Text style={Styles.listItemLeftTitleDefault}>{item.name}</Text>}
-                subtitle={
-                  balances.public.hasOwnProperty(item.id) ||
-                  balances.errors.public[item.id]
-                    ? balances.errors.public[item.id] ||
-                      isNaN(balances.public[item.id].confirmed)
-                      ? CONNECTION_ERROR
-                      : truncateDecimal(
-                          balances.public[item.id].confirmed,
-                          4
-                        ) +
-                        " " +
-                        item.id
-                    : null
-                }
-                leftAvatar={{
-                  source: item.logo
-                }}
-                subtitleStyle={
-                  (balances.public.hasOwnProperty(item.id) ||
-                    balances.errors.public[item.id]) &&
-                  (balances.errors.public[item.id] ||
-                    isNaN(balances.public[item.id].confirmed))
-                    ? Styles.listItemSubtitleDefault
-                    : null
-                }
-                containerStyle={Styles.bottomlessListItemContainer}
-                rightTitleStyle={Styles.listItemRightTitleDefault}
-                rightTitle={
-                  (!balances.public.hasOwnProperty(item.id) ||
-                  balances.errors.public[item.id] ||
-                  isNaN(balances.public[item.id].confirmed)
-                    ? "-"
-                    : truncateDecimal(
-                        (rates[item.id] && rates[item.id][displayCurrency] != null
-                          ? rates[item.id][displayCurrency]
-                          : 0) *
-                          balances.public[item.id].confirmed,
-                        2
-                      )) + ' ' + displayCurrency
-                }
-              />
-            </TouchableOpacity>
-          )}
-          extraData={balances.public}
-          keyExtractor={item => item.id}
-        />
-        <Divider style={Styles.defaultDivider} />
-        {ENABLE_WYRE && (
-          <TouchableOpacity onPress={this._buySellCrypto}>
+        data={this.props.activeCoinsForUser}
+        scrollEnabled={false}
+        renderItem={({ item, index }) => (
+          <TouchableOpacity onPress={() => {this._openCoin(this.props.activeCoinsForUser[index], item)}}>
             <ListItem
-              title={<Text style={Styles.listItemLeftTitleDefault}>Buy/Sell Crypto</Text>}
-              leftAvatar={{
-                source: require("../../images/customIcons/buySell.png")
-              }}
-              containerStyle={Styles.bottomlessListItemContainer}
-              hideChevron
+              roundAvatar
+              title={<Text style={styles.coinItemLabel}>{item.name}</Text>}
+              subtitle={
+                this.props.balances.hasOwnProperty(item.id) ?
+                  this.props.balances[item.id].error || isNaN(this.props.balances[item.id].result.confirmed) ?
+                    CONNECTION_ERROR
+                    :
+                    truncateDecimal(satsToCoins(this.props.balances[item.id].result.confirmed), 4) + ' ' + item.id
+                :
+                null
+              }
+              avatar={item.logo}
+              subtitleStyle={this.props.balances.hasOwnProperty(item.id) && (this.props.balances[item.id].error || isNaN(this.props.balances[item.id].result.confirmed)) ? {color: "rgba(206,68,70,1)", fontFamily: 'Avenir-Book'} : null}
+              containerStyle={{ borderBottomWidth: 0 }}
+              rightTitleStyle={{color: 'black'}}
+              rightTitle={
+                ('$' +
+                (!this.props.balances.hasOwnProperty(item.id) || this.props.balances[item.id].error || isNaN(this.props.balances[item.id].result.confirmed) ?
+                  '0.00'
+                  :
+                  truncateDecimal(((typeof(this.props.rates[item.id]) === 'number' ? this.props.rates[item.id] : 0)*(this.props.balances.hasOwnProperty(item.id) ?
+                  satsToCoins(this.props.balances[item.id].result.confirmed) :
+                  0)), 2)))
+              }
             />
           </TouchableOpacity>
         )}
+        extraData={this.props.balances}
+        keyExtractor={item => item.id}
+        />
+        <View style={{
+            borderBottomColor: Colors.tertiaryColor,
+            borderBottomWidth: 1,
+            width: '100%',
+            alignSelf: 'center',
+            width: "90%",
+            marginVertical: '3%'
+          }}>
+        </View>
+        {
+          ENABLE_WYRE &&
+          <TouchableOpacity onPress={this._buySellCrypto}>
+            <ListItem
+              roundAvatar
+              title={<Text style={styles.coinItemLabel}>Buy/Sell Crypto</Text>}
+              avatar={require('../../images/customIcons/buySell.png')}
+              containerStyle={{ borderBottomWidth: 0 }}
+              hideChevron
+            />
+          </TouchableOpacity>
+        }
         <TouchableOpacity onPress={this._addCoin}>
           <ListItem
-            title={<Text style={Styles.listItemLeftTitleDefault}>Add Coin</Text>}
-            leftAvatar={{
-              source: require("../../images/customIcons/coinAdd.png")
-            }}
+            roundAvatar
+            title={<Text style={styles.coinItemLabel}>Add Coin</Text>}
+            avatar={require('../../images/customIcons/coinAdd.png')}
             containerStyle={{ borderBottomWidth: 0 }}
             hideChevron
           />
         </TouchableOpacity>
       </ScrollView>
-    );
+    )
   }
 
-//'VRSC', 'vrsc', '8ccb033c0e48b27ff91e1ab948367e3bbc6921487c97624ed7ad064025e3dc99'
-
-createWallet = (coinId, coinTicker, accountHash) => {
-
-  const string = coinId + coinTicker + accountHash;
-  this.setState({ samsarray: [...this.state.samsarray, string]});
-
-}
-
-
-/*
-voorbeeld = (id) => {
-  this.props.activeCoinList.map( (item) => {
-      if(console.log(item.id) === id){
-        return true;
-    }
-  });
-  return false;
-}
-*/
-
-/*
-1) schrijf een fucntie die de wallet create.
-2) voeg to dat de wallet opslaat welk ticker protocl en accaunthash paar al is geweest.
-3) bouw een functie zoals hierboven die kan checken if een ticker-accounthash-procol paar erin staat.
-4) bouw het if statement
-5) check of de coin die toegevoegd moet worden een dlight channel heeft aka.
-6) get z API_GET_ADDRESSES
-7) dispatch z addres
-*/
-
-
   render() {
-    //'VRSC', 'vrsc', '8ccb033c0e48b27ff91e1ab948367e3bbc6921487c97624ed7ad064025e3dc99'
-
-
-    //this.props.activeCoinList.map( (item) => {
-      //  console.log(item.id);
-//  });
-
-//console.log(JSON.stringify(this.props.activeCoinList));
-
     return (
-      <View style={Styles.defaultRoot}>
-        <Text style={Styles.fiatLabel}>
-          {truncateDecimal(this.state.totalFiatBalance, 2) +
-            " " +
-            this.props.displayCurrency}
+      <View style={styles.root}>
+        <Text style={styles.fiatBalanceLabel} >
+        {'$' + truncateDecimal(this.state.totalFiatBalance, 2)}
         </Text>
-        <Text style={Styles.boldListHeader}>{"Portfolio"}</Text>
+        <Text style={styles.balanceSheetLabel}>Portfolio</Text>
         {this.renderCoinList()}
       </View>
     );
@@ -349,18 +285,10 @@ const mapStateToProps = (state) => {
     activeCoinsForUser: state.coins.activeCoinsForUser,
     activeCoinList: state.coins.activeCoinList,
     activeAccount: state.authentication.activeAccount,
-    balances: {
-      public: state.ledger.balances[ELECTRUM],
-      private: state.ledger.balances[DLIGHT],
-      errors: {
-        public: state.errors[API_GET_BALANCES][ELECTRUM],
-        private: state.errors[API_GET_BALANCES][DLIGHT],
-      }
-    },
-    //needsUpdate: state.ledger.needsUpdate,
-    rates: state.ledger.rates[GENERAL],
-    displayCurrency: state.settings.generalWalletSettings.displayCurrency || USD
+    balances: state.ledger.balances,
+    needsUpdate: state.ledger.needsUpdate,
+    rates: state.ledger.rates,
   }
 };
 
-export default connect(mapStateToProps)(withNavigationFocus(Home));
+export default connect(mapStateToProps)(Home);

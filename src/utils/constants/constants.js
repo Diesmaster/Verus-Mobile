@@ -40,7 +40,7 @@ export const BAD_SERVER_INPUT_FORMAT = 'Not in ip:port:protocol format';
 export const BAD_SERVER_PROTOCOL = 'Please choose either ssl or tcp as protocol';
 export const ELECTRUM_DISCLAIMER_UNREALIZED = 'Please confirm';
 export const ELECTRUM_DISCLAIMER = 'I understand that no developer of this mobile application is responsible for these electrum servers, and I proceed at my own risk.';
-export const POSSIBLY_UNSUPPORTED_CHAIN = "• This chain\'s key structure may not be recognized by Verus Mobile, and you could run into sending or receiving issues with it if you continue. Make sure you know what you are doing, and proceed at your own risk.";
+export const POSSIBLY_UNSUPPORTED_CHAIN = "• This chain\'s key structure may not be recognized by Verus Mobile, and you could run into sending or receiving issues with it if you continue. Make sure you know what you are doing, and proceed at your own risk.";
 
 // Coin settings
 export const NO_VERIFICATION = 0;
@@ -57,18 +57,12 @@ export const MAX_VERIFICATION_DESC = 'Complete Verification (Highly recommended)
     'cross verified across at least two different electrum servers, and the transaction IDs of your existing ' +
     'transactions will be double-checked through local transaction hashing.';
 export const VERIFICATION_LOCKED = 'The verification level settings for this coin have been locked and cannot be changed.';
-export const DEFAULT_PRIVATE_ADDRS = 100
 
 // Chain QR
 export const INCOMPLETE_CHAIN_QR = 'VerusQR code impartial or incomplete, cannot parse QR data.';
 export const COIN_TICKER_ALREADY_EXISTS = 'already exists in Verus Mobile, and therefore cannot be added as a custom coin.';
 
-// Transaction Type Constants
-export const PRIVATE = 'private'
-export const PUBLIC = 'public'
-export const TOTAL = 'total'
-
-// Payment Methods
+//Payment Methods
 export const ENABLE_WYRE = false;
 export const WYRE_URL = 'https://api.testwyre.com';
 export const WYRE_REFERRER_ACCOUNT_ID = 'verus-valu';
