@@ -1,4 +1,4 @@
-/*
+ /*
   This component works very similarly to ConfirmSend,
   in that it takes in the parameters to send and signs
   a transaction. Unlike ConfirmSend, this component
@@ -135,25 +135,25 @@ class SendResult extends Component {
           loading: false,
           err: e.message ? e.message : "Unknown error while building transaction, double check form data"
         });
-        console.log(e)
+
       })
     }else{
 
       this.setState({ loading: false });
-      console.log(params);
+
       const privateParams = [params[0], params[1], params[2], params[3], params[4], params[5], params[6] ];
       if(params[3] === null){
           Alert.alert("the to address is left empty. It will not work like this");
       }else{
         VerusLightClient.request(999, "send", privateParams ).then( (res) => {
-          console.log( "oof", res );
+
         })
         .catch((e) => {
           this.setState({
             loading: false,
             err: e.message ? e.message : "Unknown error while building transaction, double check form data"
           });
-          console.log(e)
+
         })
       }
     }

@@ -51,9 +51,9 @@ class Home extends Component {
     this.updateProps = this.updateProps.bind(this);
   }
 
-componentDidMount(){
+/*componentDidMount(){
   this.createWallet('VRSC', 'vrsc', '8ccb033c0e48b27ff91e1ab948367e3bbc6921487c97624ed7ad064025e3dc99');
-}
+}*/
 
 
   componentDidUpdate(lastProps) {

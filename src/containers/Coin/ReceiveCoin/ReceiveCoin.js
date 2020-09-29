@@ -30,7 +30,6 @@ import { conditionallyUpdateWallet } from "../../../actions/actionDispatchers"
 import { API_GET_FIATPRICE, API_GET_BALANCES, GENERAL, USD, ELECTRUM, DLIGHT } from "../../../utils/constants/intervalConstants"
 import { expireData } from "../../../actions/actionCreators"
 import Store from "../../../store"
-import SwitchButton from "switch-button-react-native"
 
 class ReceiveCoin extends Component {
   constructor(props) {
