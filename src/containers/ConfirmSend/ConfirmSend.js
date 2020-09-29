@@ -184,7 +184,7 @@ if (params === ""){
     if (this.loadingInterval) {
       clearInterval(this.loadingInterval);
     }
-  }-1
+  }
   cancel = () => {
     this.props.navigation.dispatch(NavigationActions.back())
   }

@@ -71,7 +71,7 @@ class ReceiveCoin extends Component {
       amountFiat
     } = state;
 
-    console.log(JSON.stringify(address))
+    //console.log(JSON.stringify(address))
   }
 
   setAddress = () => {
@@ -470,7 +470,7 @@ if(this.state.privateIndex == 0){
     }
 
 
-    console.log(activeUser.keys[coinObj.id].dlight.addresses)
+    //console.log(activeUser.keys[coinObj.id].dlight.addresses)
     return(
     <View >
     <View style={Styles.centralRow}>
