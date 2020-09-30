@@ -143,7 +143,7 @@ class SendResult extends Component {
 
       const privateParams = [params[0], params[1], params[2], params[3], params[4], params[5], params[6] ];
       if(params[3] === null){
-          Alert.alert("the to address is left empty. It will not work like this");
+          err: e.message ? e.message : "Unknown error while building transaction, double check form data";
       }else{
         VerusLightClient.request(999, "send", privateParams ).then( (res) => {
 

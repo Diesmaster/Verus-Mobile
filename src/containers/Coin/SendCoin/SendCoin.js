@@ -215,39 +215,6 @@ class SendCoin extends Component {
     });
   };
 
-  //this is used to test the next screen without needing the have the requirements
-  /*goToConfirmScreentest = (coinObj, activeUser, address, amount, params) => {
-    const route = "ConfirmSend";
-    let navigation = this.props.navigation;
-
-    coinObj = this.state.coin;
-    activeUser = this.state.account;
-    amount = this.state.amount;
-    address = this.state.toAddress;
-
-
-
-    if(this.state.privateIndex == 0){
-      params = "";
-    }else{
-      params = [this.state.coin.id, this.state.coin.proto, this.state.account.accountHash, this.state.toAddress, this.state.fromAddress, this.state.amount, "" ];
-    }
-
-    let data = {
-      coinObj: coinObj,
-      activeUser: activeUser,
-      address: address,
-      params: params,
-      amount: coinsToSats(Number(amount)),
-      btcFee: this.state.btcFees.average,
-      balance: (this.props.balances.public.confirmed + (this.props.balances.private ? this.props.balances.private.confirmed : 0))
-    };
-
-    navigation.navigate(route, {
-      data: data
-    });
-  }*/
-
 
   fillAddress = address => {
     this.setState({ toAddress: address });
@@ -349,19 +316,18 @@ class SendCoin extends Component {
         }
 
 
-
-        if (!_errors) {
-          var params = [];
-          if(privateIndex == 0){
-            params = "";
-          }else{
-            params = [this.state.coin.id, this.state.coin.proto, this.state.account.accountHash, this.state.toAddress, this.state.fromAddress, this.state.amount, "" ];
-          }
-          this.goToConfirmScreen(coin, account, toAddress, amount, params);
-        }
-      }
-    );
-  };
+//errors
+if (!_errors) {
+  var params = [];
+  if(privateIndex == 0){
+    params = "";
+  }else{
+    params = [this.state.coin.id, this.state.coin.proto, this.state.account.accountHash, this.state.toAddress, this.state.fromAddress, this.state.amount, "" ];
+  }
+}
+}
+);
+};
 
 switchAddress = (value) => {
   this.setState({ fromAddress: value });
@@ -481,7 +447,7 @@ dynamicDropDown = () => {
                     ? this.state.formErrors.amount
                     : null
                 }
-                
+
               />
               <View
                 style={{ ...Styles.fullWidthFlexCenterBlock, paddingBottom: 0 }}
