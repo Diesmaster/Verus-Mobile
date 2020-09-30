@@ -177,6 +177,7 @@ class SendResult extends Component {
     });
   }
 
+
   navigateToScreen = (coinObj, route) => {
     let navigation = this.props.navigation
     let data = {}

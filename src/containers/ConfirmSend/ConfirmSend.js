@@ -61,7 +61,6 @@ class ConfirmSend extends Component {
     const params = this.props.navigation.state.params.data.params
 
 if (params === ""){
-  console.log("runs");
 
     this.timeoutTimer = setTimeout(() => {
       if (this.state.loading) {
@@ -73,7 +72,6 @@ if (params === ""){
 
 
     this.loadingInterval = setInterval(() => {
-      console.log("big oof")
       this.tickLoading()
     }, LOADING_TICKER);
 
@@ -150,13 +148,13 @@ if (params === ""){
           loading: false,
           err: e.message ? e.message : "Unknown error while building transaction, double check form data"
         });
-        console.log(e)
+
       })
     }else{
       let finalTxAmount = amount - fee;
       let remainingBalance = balance - amount;
 
-      console.log(params[3], params[4])
+      
       this.setState({
         loading: false,
         toAddress: params[3],

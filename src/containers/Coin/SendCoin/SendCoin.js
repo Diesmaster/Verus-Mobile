@@ -481,6 +481,7 @@ dynamicDropDown = () => {
                     ? this.state.formErrors.amount
                     : null
                 }
+                
               />
               <View
                 style={{ ...Styles.fullWidthFlexCenterBlock, paddingBottom: 0 }}
