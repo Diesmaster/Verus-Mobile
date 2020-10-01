@@ -25,13 +25,10 @@ import {
 import { satsToCoins, truncateDecimal } from '../../../../utils/math'
 import { explorers } from '../../../../utils/CoinData/CoinData'
 import {
-  //needsUpdate,
-  //transactionsNeedUpdate,
   setActiveCoin,
   setActiveApp,
   setActiveSection,
   expireData,
-  //balancesNeedUpdate
  } from '../../../../actions/actionCreators'
 import ProgressBar from 'react-native-progress/Bar'
 import { Icon } from 'react-native-elements'
@@ -75,7 +72,7 @@ class SendResult extends Component {
     const network = networks[coinObj.id.toLowerCase()] ? networks[coinObj.id.toLowerCase()] : networks['default']
     const params = this.props.navigation.state.params.data.params
 
-    if( params === ""){
+    if( params === null){
 
     this.timeoutTimer = setTimeout(() => {
       if (this.state.loading) {
@@ -172,7 +169,7 @@ class SendResult extends Component {
       if (supported) {
         Linking.openURL(url);
       } else {
-        console.log("Don't know how to open URI: " + url);
+        //console.log("Don't know how to open URI: " + url);
       }
     });
   }
@@ -403,7 +400,6 @@ const mapStateToProps = (state) => {
         private: state.errors[API_GET_BALANCES][DLIGHT][chainTicker],
       }
     },
-    //needsUpdate: state.ledger.needsUpdate,
     activeAccount: state.authentication.activeAccount,
     coinSettings: state.settings.coinSettings,
   }
