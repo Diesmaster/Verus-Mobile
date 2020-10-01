@@ -94,7 +94,7 @@ class SendResult extends Component {
       verifyMerkle = this.props.coinSettings[coinObj.id].verificationLvl > MID_VERIFICATION ? true : false
       verifyTxid = this.props.coinSettings[coinObj.id].verificationLvl > NO_VERIFICATION ? true : false
     } else {
-      console.warn(`No coin settings data found for ${coinObj.id} in SendResult, assuming highest verification level`)
+      Alert.alert(`No coin settings data found for ${coinObj.id} in SendResult, assuming highest verification level`)
       verifyMerkle = true
       verifyTxid = true
     }
@@ -143,7 +143,7 @@ class SendResult extends Component {
           err: e.message ? e.message : "Unknown error while building transaction, double check form data";
       }else{
         VerusLightClient.request(transactionrequestID, "send", privateParams ).then( (res) => {
-
+console.log(res)
         })
         .catch((e) => {
           this.setState({

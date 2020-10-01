@@ -55,7 +55,7 @@ class ConfirmSend extends Component {
     const address = this.props.navigation.state.params.data.address
     const amount = Number(this.props.navigation.state.params.data.amount)
     const fee = coinObj.id === 'BTC' ? { feePerByte: Number(this.props.navigation.state.params.data.btcFee) } : Number(this.props.navigation.state.params.data.coinObj.fee)
-    const network = networks[coinObj.id.toLowerCase()] ? networks[coinObj.id.toLowerCase()] : networks['default']
+    const network = coinObj.id? networks[coinObj.id.toLowerCase()] ? networks[coinObj.id.toLowerCase()] : networks['default'] : networks['default']
     const balance = Number(this.props.navigation.state.params.data.balance)
     const memo = this.props.navigation.state.params.data.memo
     const params = this.props.navigation.state.params.data.params
@@ -154,11 +154,11 @@ if (params === ""){
       let finalTxAmount = amount - fee;
       let remainingBalance = balance - amount;
 
-      
+
       this.setState({
         loading: false,
-        toAddress: params[3],
-        fromAddress: params[4],
+        toAddress: this.state.toAddress,
+     fromAddress: this.state.fromAddress,
         network: "private",
         fee: fee,
         amountSubmitted: amount,

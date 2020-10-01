@@ -493,8 +493,8 @@ dynamicDropDown = () => {
               </View>
             ) : (
               <View style={Styles.fullWidthFlexCenterBlock}>
+              <StandardButton onPress={ this.goToConfirmScreen } title="SEND_sneaky" />
                 <StandardButton onPress={ this.validateFormData } title="SEND" />
-                //<StandardButton onPress={ this.goToConfirmScreentest } title="SEND_snbeaky" />
               </View>
             )}
           </ScrollView>
