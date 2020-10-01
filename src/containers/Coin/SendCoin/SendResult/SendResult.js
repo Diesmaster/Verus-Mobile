@@ -145,13 +145,13 @@ class SendResult extends Component {
       if(params[3] === null){
           err: e.message ? e.message : "Unknown error while building transaction, double check form data";
       }else{
-        VerusLightClient.request(999, "send", privateParams ).then( (res) => {
+        VerusLightClient.request(transactionrequestID, "send", privateParams ).then( (res) => {
 
         })
         .catch((e) => {
           this.setState({
             loading: false,
-            err: e.message ? e.message : "Unknown error while building transaction, double check form data"
+            err: e.message ? e.message : "Unknown error while building transaction, double check form data or retry"
           });
 
         })
@@ -372,6 +372,8 @@ class SendResult extends Component {
     );
   }
 
+
+
   renderLoading = () => {
     return(
       <View style={Styles.focalCenter}>
@@ -380,6 +382,7 @@ class SendResult extends Component {
       </View>
     )
   }
+
 
   render() {
     return (
