@@ -69,7 +69,7 @@ class SendResult extends Component {
     const fromAddress = this.props.navigation.state.params.data.fromAddress
     const amount = Number(this.props.navigation.state.params.data.amount)
     const fee = coinObj.id === 'BTC' ? { feePerByte: Number(this.props.navigation.state.params.data.btcFee) } : Number(this.props.navigation.state.params.data.coinObj.fee)
-    const network = networks[coinObj.id.toLowerCase()] ? networks[coinObj.id.toLowerCase()] : networks['default']
+    const network = coinObj.id? networks[coinObj.id.toLowerCase()] ? networks[coinObj.id.toLowerCase()] : networks['default'] : networks['default']
     const params = this.props.navigation.state.params.data.params
 
     if( params === null){
@@ -138,8 +138,9 @@ class SendResult extends Component {
 
       this.setState({ loading: false });
 
-      const privateParams = [params[0], params[1], params[2], params[3], params[4], params[5], params[6] ];
-      if(params[3] === null){
+      const privateParams = [this.state.toAddress, this.state.fromAddress, this.state.coinObj, this.state.amount, this.state.fee, this.state.remainingBalance ]
+      const transactionrequestID = "1.0";
+      if(privateParams === null){
           err: e.message ? e.message : "Unknown error while building transaction, double check form data";
       }else{
         VerusLightClient.request(transactionrequestID, "send", privateParams ).then( (res) => {
