@@ -71,7 +71,7 @@
     "react-dom": "^16.4.2",
     "react-native": "0.61.5",
     "react-native-alert-async": "^1.0.3",
-    "react-native-cache": "https://github.com/michaeltout/react-native-cache.git",
+    "react-native-cache": "https://github.com/michaeltout/react-native-cache.git#f2e197fe8459d8a5651099f15475510317e30ba3",
     "react-native-camera": "^3.22.1",
     "react-native-country-picker-modal": "^1.5.2",
     "react-native-crypto": "^2.1.2",
