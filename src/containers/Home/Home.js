@@ -9,7 +9,7 @@
 */
 
 import React, { Component } from "react";
-import { ListItem, Divider } from "react-native-elements";
+import { ListItem, Divider, Button } from "react-native-elements";
 import {
   View,
   Text,
@@ -46,6 +46,8 @@ import BigNumber from "bignumber.js";
 import { CoinLogos } from "../../utils/CoinData/CoinData";
 import { AddCoinLogo, VerusPayLogo } from "../../images/customIcons";
 
+import VerusLightClient from 'react-native-verus-light-client'
+
 const CONNECTION_ERROR = "Connection Error"
 
 class Home extends Component {
@@ -62,6 +64,25 @@ class Home extends Component {
     this._unsubscribeFocus = this.props.navigation.addListener('focus', () => {
       this.refresh();
     });
+    VerusLightClient.createWallet('VRSC', 'vrsc', '8ccb033c0e48b27ff91e1ab948367e3bbc6921487c97624ed7ad064025e3dc99', "light.virtualsoundnw.com", 9077, 2, "wish puppy smile loan doll curve hole maze file ginger hair nose key relax knife witness cannon grab despair throw review deal slush frame", 1280900)
+    .then(res => {
+      console.log("ADD WALLET RES")
+      console.log(res)
+      return VerusLightClient.openWallet('VRSC', 'vrsc', '8ccb033c0e48b27ff91e1ab948367e3bbc6921487c97624ed7ad064025e3dc99')
+    })
+    .then(res => {
+      console.log("ADD WALLET RES")
+      console.log(res)
+      return VerusLightClient.startSync('VRSC', 'vrsc', '8ccb033c0e48b27ff91e1ab948367e3bbc6921487c97624ed7ad064025e3dc99')
+    })
+    .then(res => {
+      console.log("START SYNC RES")
+      console.log(res)
+    })
+    .catch(err => {
+      console.log("ADD WALLET OR REQ REJ")
+      console.log(err)
+    })
   }
 
   componentWillUnmount() {
@@ -211,6 +232,38 @@ class Home extends Component {
     this.props.navigation.navigate('ScanBadge');
   }
 
+  onClick = () => {
+    VerusLightClient.request(666, "listprivatetransactions", ['VRSC', 'vrsc', '8ccb033c0e48b27ff91e1ab948367e3bbc6921487c97624ed7ad064025e3dc99', "cleared"])
+    .then(res => {
+      console.log("request RES")
+      console.log(res)
+    })
+  }
+
+  onClick2 = () => {
+    VerusLightClient.request(666, "getinfo", ['VRSC', 'vrsc', '8ccb033c0e48b27ff91e1ab948367e3bbc6921487c97624ed7ad064025e3dc99'])
+    .then(res => {
+      console.log("request RES")
+      console.log(res)
+    })
+  }
+
+  onClick3 = () => {
+    VerusLightClient.request(666, "listaddresses", ['VRSC', 'vrsc', '8ccb033c0e48b27ff91e1ab948367e3bbc6921487c97624ed7ad064025e3dc99'])
+    .then(res => {
+      console.log("request RES")
+      console.log(res)
+    })
+  }
+
+  onClick4 = () => {
+    VerusLightClient.deleteWallet('VRSC', 'vrsc', '8ccb033c0e48b27ff91e1ab948367e3bbc6921487c97624ed7ad064025e3dc99')
+    .then(res => {
+      console.log("request RES")
+      console.log(res)
+    })
+  }
+
   renderCoinList = () => {
     const { rates, balances, activeCoinsForUser, displayCurrency } = this.props;
 
@@ -353,6 +406,30 @@ class Home extends Component {
             />
           </TouchableOpacity>
         )}
+        <Button
+        title="CONTINUE"
+        titleStyle={Styles.whiteText}
+        buttonStyle={Styles.fullWidthButtonKYC}
+        onPress={ this.onClick }
+        />
+        <Button
+        title="CONTINUE2"
+        titleStyle={Styles.whiteText}
+        buttonStyle={Styles.fullWidthButtonKYC}
+        onPress={ this.onClick2 }
+        />
+        <Button
+        title="CONTINUE3"
+        titleStyle={Styles.whiteText}
+        buttonStyle={Styles.fullWidthButtonKYC}
+        onPress={ this.onClick3 }
+        />
+        <Button
+        title="CONTINUE4"
+        titleStyle={Styles.whiteText}
+        buttonStyle={Styles.fullWidthButtonKYC}
+        onPress={ this.onClick4 }
+        />
         <TouchableOpacity onPress={this._addCoin}>
           <ListItem
             title={

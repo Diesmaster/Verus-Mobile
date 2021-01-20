@@ -16,6 +16,7 @@ import {
   updateActiveCoinList,
   checkAndSetVersion
 } from './utils/asyncStore/asyncStore'
+
 import { connect } from 'react-redux';
 import { ENABLE_VERUS_IDENTITIES } from '../env/main.json'
 
